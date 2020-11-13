@@ -61,9 +61,9 @@ open class USBDeviceMonitor {
             var vid:UInt16 = 0
             var pid:UInt16 = 0
 
-            var deviceInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBDeviceInterface>?>?
+            var deviceInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceStruct550>?>?
             var plugInInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?
-            var deviceInterfacePtrPtr100:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceStruct100>?>?
+            
             
             kr = IORegistryEntryGetRegistryEntryID(usbDevice, &did)
             
@@ -119,29 +119,13 @@ open class USBDeviceMonitor {
                 continue
             }
             
-            
-            
-            // use plug in interface to get a device interface100
-            kr = withUnsafeMutablePointer(to: &deviceInterfacePtrPtr100) {
-                $0.withMemoryRebound(to: Optional<LPVOID>.self, capacity: 1) {
-                    plugInInterface.QueryInterface(
-                        plugInInterfacePtrPtr,
-                        CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID),
-                        $0)
-                }
-            }
-            
-            // dereference pointer for the device interface
-            if (kr != kIOReturnSuccess) {
-                continue
-            }
 
             guard let deviceInterface = deviceInterfacePtrPtr?.pointee?.pointee else {
                 print("Unable to get Device Interface")
                 continue
             }
             
-            kr = deviceInterface.USBDeviceOpen(deviceInterfacePtrPtr)
+            kr = deviceInterface.USBInterfaceOpen(deviceInterfacePtrPtr)
             
             // kIOReturnExclusiveAccess is not a problem as we can still do some things
             if (kr != kIOReturnSuccess && kr != kIOReturnExclusiveAccess) {
@@ -165,8 +149,7 @@ open class USBDeviceMonitor {
                 productId: pid,
                 name:name,
                 deviceInterfacePtrPtr:deviceInterfacePtrPtr,
-                plugInInterfacePtrPtr:plugInInterfacePtrPtr,
-                deviceInterfacePtrPtr100: deviceInterfacePtrPtr100
+                plugInInterfacePtrPtr: plugInInterfacePtrPtr
             )
             
             NotificationCenter.default.post(name: .USBDeviceConnected, object: [

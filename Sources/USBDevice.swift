@@ -55,17 +55,16 @@ public struct USBDevice {
     public let productId:UInt16
     public let name:String
     
-    public let deviceInterfacePtrPtr100:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceStruct100>?>?
-    public let deviceInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBDeviceInterface>?>?
+ 
+    public let deviceInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceInterface550>?>?
     public let plugInInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?
     
     public init(id:UInt64,
                 vendorId:UInt16,
                 productId:UInt16,
                 name:String,
-                deviceInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBDeviceInterface>?>?,
-                plugInInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?,
-                deviceInterfacePtrPtr100: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceStruct100>?>?
+                deviceInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceInterface550>?>?,
+                plugInInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?
                 ) {
         self.id = id
         self.vendorId = vendorId
@@ -73,7 +72,6 @@ public struct USBDevice {
         self.name = name
         self.deviceInterfacePtrPtr = deviceInterfacePtrPtr
         self.plugInInterfacePtrPtr = plugInInterfacePtrPtr
-        self.deviceInterfacePtrPtr100 = deviceInterfacePtrPtr100
 
     }
 }
