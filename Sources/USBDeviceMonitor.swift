@@ -63,7 +63,8 @@ open class USBDeviceMonitor {
 
             var deviceInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBDeviceInterface>?>?
             var plugInInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?
-
+            var deviceInterfacePtrPtr100:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceStruct100>?>?
+            
             kr = IORegistryEntryGetRegistryEntryID(usbDevice, &did)
             
             if(kr != kIOReturnSuccess) {
@@ -117,6 +118,23 @@ open class USBDeviceMonitor {
             if (kr != kIOReturnSuccess) {
                 continue
             }
+            
+            
+            
+            // use plug in interface to get a device interface100
+            kr = withUnsafeMutablePointer(to: &deviceInterfacePtrPtr100) {
+                $0.withMemoryRebound(to: Optional<LPVOID>.self, capacity: 1) {
+                    plugInInterface.QueryInterface(
+                        plugInInterfacePtrPtr,
+                        CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID),
+                        $0)
+                }
+            }
+            
+            // dereference pointer for the device interface
+            if (kr != kIOReturnSuccess) {
+                continue
+            }
 
             guard let deviceInterface = deviceInterfacePtrPtr?.pointee?.pointee else {
                 print("Unable to get Device Interface")
@@ -147,7 +165,8 @@ open class USBDeviceMonitor {
                 productId: pid,
                 name:name,
                 deviceInterfacePtrPtr:deviceInterfacePtrPtr,
-                plugInInterfacePtrPtr:plugInInterfacePtrPtr
+                plugInInterfacePtrPtr:plugInInterfacePtrPtr,
+                deviceInterfacePtrPtr100: deviceInterfacePtrPtr100
             )
             
             NotificationCenter.default.post(name: .USBDeviceConnected, object: [
