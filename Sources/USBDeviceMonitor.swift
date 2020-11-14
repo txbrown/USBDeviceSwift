@@ -61,9 +61,9 @@ open class USBDeviceMonitor {
             var vid:UInt16 = 0
             var pid:UInt16 = 0
 
-            var deviceInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceStruct550>?>?
+            var deviceInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBDeviceInterface650>?>?
             var plugInInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?
-            
+
             
             kr = IORegistryEntryGetRegistryEntryID(usbDevice, &did)
             
@@ -125,7 +125,7 @@ open class USBDeviceMonitor {
                 continue
             }
             
-            kr = deviceInterface.USBInterfaceOpen(deviceInterfacePtrPtr)
+            kr = deviceInterface.USBDeviceOpen(deviceInterfacePtrPtr)
             
             // kIOReturnExclusiveAccess is not a problem as we can still do some things
             if (kr != kIOReturnSuccess && kr != kIOReturnExclusiveAccess) {
@@ -149,7 +149,7 @@ open class USBDeviceMonitor {
                 productId: pid,
                 name:name,
                 deviceInterfacePtrPtr:deviceInterfacePtrPtr,
-                plugInInterfacePtrPtr: plugInInterfacePtrPtr
+                plugInInterfacePtrPtr:plugInInterfacePtrPtr
             )
             
             NotificationCenter.default.post(name: .USBDeviceConnected, object: [
