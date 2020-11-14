@@ -129,7 +129,7 @@ open class USBDeviceMonitor {
                 $0.withMemoryRebound(to: Optional<LPVOID>.self, capacity: 1) {
                     plugInInterface.QueryInterface(
                         plugInInterfacePtrPtr,
-                        CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID700),
+                        CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID),
                         $0)
                 }
             }
