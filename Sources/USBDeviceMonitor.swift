@@ -62,6 +62,8 @@ open class USBDeviceMonitor {
             var pid:UInt16 = 0
 
             var deviceInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBDeviceInterface650>?>?
+            var interfaceInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceInterface700>?>?
+            
             var plugInInterfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?
 
             
@@ -91,6 +93,8 @@ open class USBDeviceMonitor {
                 &plugInInterfacePtrPtr,
                 &score)
             
+            
+            
             // USB device object is no longer needed.
             IOObjectRelease(usbDevice)
             
@@ -110,6 +114,22 @@ open class USBDeviceMonitor {
                     plugInInterface.QueryInterface(
                         plugInInterfacePtrPtr,
                         CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID),
+                        $0)
+                }
+            }
+            
+            // dereference pointer for the device interface
+            if (kr != kIOReturnSuccess) {
+                continue
+            }
+            
+            
+            // use plug in interface to get a device interface
+            kr = withUnsafeMutablePointer(to: &interfaceInterfacePtrPtr) {
+                $0.withMemoryRebound(to: Optional<LPVOID>.self, capacity: 1) {
+                    plugInInterface.QueryInterface(
+                        plugInInterfacePtrPtr,
+                        CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID700),
                         $0)
                 }
             }
@@ -149,7 +169,8 @@ open class USBDeviceMonitor {
                 productId: pid,
                 name:name,
                 deviceInterfacePtrPtr:deviceInterfacePtrPtr,
-                plugInInterfacePtrPtr:plugInInterfacePtrPtr
+                plugInInterfacePtrPtr:plugInInterfacePtrPtr,
+                interfaceInterfacePtr: interfaceInterfacePtrPtr
             )
             
             NotificationCenter.default.post(name: .USBDeviceConnected, object: [

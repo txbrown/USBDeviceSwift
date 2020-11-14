@@ -24,6 +24,8 @@ public let kIOCFPlugInInterfaceID = CFUUIDGetConstantUUIDWithBytes(nil,
                                                             0xC2, 0x44, 0xE8, 0x58, 0x10, 0x9C, 0x11, 0xD4,
                                                             0x91, 0xD4, 0x00, 0x50, 0xE4, 0xC6, 0x42, 0x6F)
 
+public let kIOUSBInterfaceInterfaceID700 = CFUUIDGetConstantUUIDWithBytes(kCFAllocatorDefault, 0x17, 0xF9, 0xE5, 0x9C, 0xB0, 0xA1, 0x40, 0x1D, 0x9A, 0xC0, 0x8D, 0xE2, 0x7A, 0xC6, 0x04, 0x7E)
+
 
 /*!
  @defined USBmakebmRequestType
@@ -59,12 +61,15 @@ public struct USBDevice {
     public let deviceInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBDeviceInterface650>?>?
     public let plugInInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?
     
+    public let interfaceInterfacePtr:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceInterface700>?>?
+    
     public init(id:UInt64,
                 vendorId:UInt16,
                 productId:UInt16,
                 name:String,
                 deviceInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBDeviceInterface650>?>?,
-                plugInInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?
+                plugInInterfacePtrPtr:UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>?,
+                interfaceInterfacePtr:UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceInterface700>?>?
                 ) {
         self.id = id
         self.vendorId = vendorId
@@ -72,6 +77,6 @@ public struct USBDevice {
         self.name = name
         self.deviceInterfacePtrPtr = deviceInterfacePtrPtr
         self.plugInInterfacePtrPtr = plugInInterfacePtrPtr
-
+        self.interfaceInterfacePtr = interfaceInterfacePtr
     }
 }
